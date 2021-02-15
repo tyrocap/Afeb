@@ -10,8 +10,8 @@
 
 MainWindow::MainWindow() {
     _window = nullptr;
-    _screenWidth = 1024;
-    _screenHeight = 768;
+    _screenWidth = 1224;
+    _screenHeight = 868;
     _windowState = WindowState::ON;
 
 }
@@ -26,7 +26,7 @@ void MainWindow::run() {
                       glm::vec3(1.0f, 0.0f, 1.0f),
                       glm::vec3(0.0f, 1.0f,  1.0f),
                       glm::vec3(0.0f, -1.0f, 1.0f),
-                      glm::vec3(1.0f, 0.0f, 0.0f));
+                      glm::vec3(0.0f, 0.0f, 0.0f));
     mainLoop();
 }
 
@@ -90,6 +90,9 @@ void MainWindow::drawWindow() {
 
     // Shaders
     _shaderProgram.use();
+
+    glLineWidth(2);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     _coordSystem.draw();
 

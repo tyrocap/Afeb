@@ -35,39 +35,61 @@ void CoordSystem::init(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, glm::vec3 pt
     _clG = color.y;
     _clB = color.z;
 
+    // coord system X axis number lines position/color
+    float tempX = -1.0f;
+    float tempY = 0.02f;
+    int idx = 0;
+    for (int i = 0; i < 21; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            _coordNumbers[idx++] = tempX; // position: X
+            _coordNumbers[idx++] = tempY; // position: Y
+            _coordNumbers[idx++] = 0.0f; // position: Z
+            _coordNumbers[idx++] = 0.0f; // color: R
+            _coordNumbers[idx++] = 0.0f; // color: G
+            _coordNumbers[idx++] = 0.0f; // color: B
+            tempY *= -1;
+        }
+        tempX += 0.1f;
+    }
+
     // Generate vertex buffer if it doesn't exist
     if (_vboID == 0) {
         glGenBuffers(1, &_vboID);
     }
-    float vertexData[24];
-    // Set coordinates
-    vertexData[0] = _pt1X;
-    vertexData[1] = _pt1Y;
-    vertexData[2] = _pt1Z;
-    vertexData[3] = _clR;
-    vertexData[4] = _clG;
-    vertexData[5] = _clB;
+    float vertexData[276];
+    // Set coordinates of X and Y axes
+    idx = 0;
+    vertexData[idx++] = _pt1X;
+    vertexData[idx++] = _pt1Y;
+    vertexData[idx++] = _pt1Z;
+    vertexData[idx++] = _clR;
+    vertexData[idx++] = _clG;
+    vertexData[idx++] = _clB;
 
-    vertexData[6] = _pt2X;
-    vertexData[7] = _pt2Y;
-    vertexData[8] = _pt2Z;
-    vertexData[9] = _clR;
-    vertexData[10] = _clG;
-    vertexData[11] = _clB;
+    vertexData[idx++] = _pt2X;
+    vertexData[idx++] = _pt2Y;
+    vertexData[idx++] = _pt2Z;
+    vertexData[idx++] = _clR;
+    vertexData[idx++] = _clG;
+    vertexData[idx++] = _clB;
 
-    vertexData[12] = _pt3X;
-    vertexData[13] = _pt3Y;
-    vertexData[14] = _pt3Z;
-    vertexData[15] = _clR;
-    vertexData[16] = _clG;
-    vertexData[17] = _clB;
+    vertexData[idx++] = _pt3X;
+    vertexData[idx++] = _pt3Y;
+    vertexData[idx++] = _pt3Z;
+    vertexData[idx++] = _clR;
+    vertexData[idx++] = _clG;
+    vertexData[idx++] = _clB;
 
-    vertexData[18] = _pt4X;
-    vertexData[19] = _pt4Y;
-    vertexData[20] = _pt4Z;
-    vertexData[21] = _clR;
-    vertexData[22] = _clG;
-    vertexData[23] = _clB;
+    vertexData[idx++] = _pt4X;
+    vertexData[idx++] = _pt4Y;
+    vertexData[idx++] = _pt4Z;
+    vertexData[idx++] = _clR;
+    vertexData[idx++] = _clG;
+    vertexData[idx++] = _clB;
+
+    for (int i = 0; i < 252; ++i) {
+        vertexData[idx++] = _coordNumbers[i];
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 
@@ -86,7 +108,7 @@ void CoordSystem::draw() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-    glDrawArrays(GL_LINES, 0, 4);
+    glDrawArrays(GL_LINES, 0, 46);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);

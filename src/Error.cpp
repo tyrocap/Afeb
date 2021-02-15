@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include <cstdlib>
 
 
 // TODO: create an error handling class
@@ -14,4 +15,5 @@ void fatalError(std::string errorString) {
     int tmp;
     std::cin >> tmp;
     SDL_Quit();
+    exit(1);
 }

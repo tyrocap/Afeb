@@ -25,6 +25,8 @@ private:
          _pt4X, _pt4Y, _pt4Z;
     // color
    float _clR, _clG, _clB;
+   // numbers on the X axis
+   float _coordNumbers[252];
 
     unsigned int _vboID;
 
