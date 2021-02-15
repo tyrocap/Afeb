@@ -9,7 +9,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(SDL2 REQUIRED)
 
-add_executable(Afeb main.cpp src/MainWindow.cpp include/MainWindow.h)
+add_executable(Afeb main.cpp src/MainWindow.cpp include/MainWindow.h src/CoordSystem.cpp include/CoordSystem.h)
 
 target_include_directories(Afeb PUBLIC ${OPENGL_INCLUDE_DIR})
 target_include_directories(Afeb PUBLIC ${SDL2_INCLUDE_DIRS})

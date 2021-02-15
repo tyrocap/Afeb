@@ -7,6 +7,7 @@
 
 #include <SDL.h>
 #include <GL/glew.h>
+#include "CoordSystem.h";
 
 enum class WindowState {
     ON, OFF
@@ -24,6 +25,7 @@ private:
 
     void initSystems();
     void mainLoop(); // gameLoop
+    void drawWindow(); // drawGame
     void processInput();
 
     SDL_Window* _window;
@@ -31,6 +33,8 @@ private:
     int _screenHeight;
 
     WindowState _windowState;
+
+    CoordSystem _coordSystem;
 
 };
 

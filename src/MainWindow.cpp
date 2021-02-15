@@ -5,6 +5,7 @@
 #include "../include/MainWindow.h"
 #include <iostream>
 
+
 // TODO: create an error handling class
 void fatalError(std::string errorString) {
     std::cout << errorString << std::endl;
@@ -28,7 +29,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::run() {
     initSystems();
-
+    _coordSystem.init(-1.0f, -1.0f, 1.0f, 1.0f);
     mainLoop();
 }
 
@@ -41,12 +42,28 @@ void MainWindow::initSystems() {
         fatalError("SDL Window could not be created!");
     }
 
+    // OpenGL initilization logic
+    SDL_GLContext glContext = SDL_GL_CreateContext(_window);
+    if (glContext == nullptr) {
+        fatalError("SDL_GL context could not be created!");
+    }
+
+    GLenum error = glewInit();
+    if (error != GLEW_OK) {
+        fatalError("Could not initilize glew!");
+    }
+
+    // set up two buffers
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    glClearColor(1.0f, 1.0f, 0.95f, 1.0);
 
 }
 
 void MainWindow::mainLoop() {
     while (_windowState != WindowState::OFF) {
         processInput();
+        drawWindow();
     }
 
 }
@@ -64,4 +81,16 @@ void MainWindow::processInput() {
         }
     }
 
+}
+
+void MainWindow::drawWindow() {
+    // Set the base depth to 1.0
+    glClearDepth(1.0);
+    // Clear the color and depth buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    _coordSystem.draw();
+
+    // Swap buffers and draw everything to the screen
+    SDL_GL_SwapWindow(_window);
 }
