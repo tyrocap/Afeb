@@ -29,7 +29,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::run() {
     initSystems();
-    _coordSystem.init(-1.0f, -1.0f, 1.0f, 1.0f);
+    _coordSystem.init(-1.0f, 0.0f, 1.0f, 0.0f,
+                      0.0f, 1.0f, 0.0f, -1.0f);
     mainLoop();
 }
 
@@ -56,7 +57,7 @@ void MainWindow::initSystems() {
     // set up two buffers
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    glClearColor(1.0f, 1.0f, 0.95f, 1.0);
+    glClearColor(0.0f, 0.0f, 0.1f, 1.0);
 
 }
 
