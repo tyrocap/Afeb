@@ -22,10 +22,11 @@ MainWindow::~MainWindow() {
 
 void MainWindow::run() {
     initSystems();
-    _coordSystem.init(-1.0f, 0.0f, 1.0f,
-                      1.0f, 0.0f, 1.0f,
-                      0.0f, 1.0f,  1.0f,
-                      0.0f, -1.0f, 1.0f);
+    _coordSystem.init(glm::vec3(-1.0f, 0.0f, 1.0f),
+                      glm::vec3(1.0f, 0.0f, 1.0f),
+                      glm::vec3(0.0f, 1.0f,  1.0f),
+                      glm::vec3(0.0f, -1.0f, 1.0f),
+                      glm::vec3(1.0f, 0.0f, 0.0f));
     mainLoop();
 }
 
