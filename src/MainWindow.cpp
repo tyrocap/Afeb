@@ -4,16 +4,9 @@
 
 #include "../include/MainWindow.h"
 #include <iostream>
+#include "Error.h"
 
 
-// TODO: create an error handling class
-void fatalError(std::string errorString) {
-    std::cout << errorString << std::endl;
-    std::cout << "Enter any key to quit..";
-    int tmp;
-    std::cin >> tmp;
-    SDL_Quit();
-}
 
 MainWindow::MainWindow() {
     _window = nullptr;
@@ -29,8 +22,10 @@ MainWindow::~MainWindow() {
 
 void MainWindow::run() {
     initSystems();
-    _coordSystem.init(-1.0f, 0.0f, 1.0f, 0.0f,
-                      0.0f, 1.0f, 0.0f, -1.0f);
+    _coordSystem.init(-1.0f, 0.0f, 1.0f,
+                      1.0f, 0.0f, 1.0f,
+                      0.0f, 1.0f,  1.0f,
+                      0.0f, -1.0f, 1.0f);
     mainLoop();
 }
 
@@ -57,7 +52,9 @@ void MainWindow::initSystems() {
     // set up two buffers
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    glClearColor(0.0f, 0.0f, 0.1f, 1.0);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0);
+
+    initShaders();
 
 }
 
@@ -90,8 +87,19 @@ void MainWindow::drawWindow() {
     // Clear the color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Shaders
+    _shaderProgram.use();
+
     _coordSystem.draw();
+
+    _shaderProgram.unuse();
 
     // Swap buffers and draw everything to the screen
     SDL_GL_SwapWindow(_window);
+}
+
+void MainWindow::initShaders() {
+    _shaderProgram.compileShaders("./shaders/basic.vert",
+                                  "./shaders/basic.frag");
+    _shaderProgram.linkShaders();
 }
