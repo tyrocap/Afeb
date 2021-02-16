@@ -18,21 +18,20 @@ public:
     void draw();
 
 private:
-    // position coords (xyz)
-   float _pt1X, _pt1Y, _pt1Z,
+    // X and Y axes position coords (xyz)
+    float _pt1X, _pt1Y, _pt1Z,
          _pt2X, _pt2Y, _pt2Z,
          _pt3X, _pt3Y, _pt3Z,
          _pt4X, _pt4Y, _pt4Z;
-    // color
-   float _clR, _clG, _clB;
-   // numbers on the X axis
-   float _coordNumbers[252];
+
+    // X and Y axes color coords (rgb)
+    float _clR, _clG, _clB;
+
+    // X axis lines coords
+    float _xAxisLinesCoords[252];
+    float _yAxisLinesCoords[252];
 
     unsigned int _vboID;
-
-
-
-
 };
 
 

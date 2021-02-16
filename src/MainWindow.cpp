@@ -1,10 +1,11 @@
 //
 // Created by adam on 2/14/21.
 //
-
 #include "../include/MainWindow.h"
 #include <iostream>
+#include <glm/ext/matrix_transform.hpp>
 #include "Error.h"
+#include "Triangle.h"
 
 
 
@@ -13,7 +14,6 @@ MainWindow::MainWindow() {
     _screenWidth = 1224;
     _screenHeight = 868;
     _windowState = WindowState::ON;
-
 }
 
 MainWindow::~MainWindow() {
@@ -94,9 +94,25 @@ void MainWindow::drawWindow() {
     glLineWidth(2);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    glm::vec3 positions[3] = {glm::vec3(-0.5f, -0.5f, 0.0f),
+                              glm::vec3(0.0f, 0.5f, 0.0f),
+                              glm::vec3(0.5f, -0.5f, 0.0f)};
+    Triangle triangle(positions, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // transformation matrix
+    glm::mat4 m(1.0f);
+
+    //m = glm::translate(m, glm::vec3(0.0f, 0.5f, 0.0f));
+    //m = glm::rotate(m, glm::radians(70.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //m = glm::scale(m, glm::vec3(0.5f, 0.05f, 0.0f));
+
+    triangle.transform(m);
+    triangle.draw();
+
     _coordSystem.draw();
 
     _shaderProgram.unuse();
+
 
     // Swap buffers and draw everything to the screen
     SDL_GL_SwapWindow(_window);
