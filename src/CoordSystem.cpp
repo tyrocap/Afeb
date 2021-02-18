@@ -6,6 +6,12 @@
 #include <glm/vec3.hpp>
 
 namespace Afeb {
+
+    namespace cst {
+        const int XY_AXES_DATA_LENGTH = 24;
+    }
+
+
     CoordSystem::CoordSystem() {
         _vboID = 0;
     }
@@ -20,16 +26,15 @@ namespace Afeb {
     void CoordSystem::init() {
 
         int index = 0;
-        int const XY_AXES_DATA_LENGTH = 24;
 
         // Set X and Y axes points (= position and color coords)
-        float xYCoords[XY_AXES_DATA_LENGTH] = {
+        float xYCoords[cst::XY_AXES_DATA_LENGTH] = {
             -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f
         };
-        for (int i = 0; i < XY_AXES_DATA_LENGTH; ++i) {
+        for (int i = 0; i < cst::XY_AXES_DATA_LENGTH; ++i) {
             _xYCoordsData[index++] = xYCoords[i];
         }
 

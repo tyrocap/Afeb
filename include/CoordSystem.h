@@ -8,9 +8,13 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
-constexpr int COORD_SYSTEM_DATA_LENGTH = 528;
 
 namespace Afeb {
+
+    namespace cst {
+        const int COORD_SYSTEM_DATA_LENGTH = 528;
+    }
+
     class CoordSystem {
     public:
         CoordSystem();
@@ -21,7 +25,7 @@ namespace Afeb {
     private:
         void init();
 
-        float _xYCoordsData[COORD_SYSTEM_DATA_LENGTH];
+        float _xYCoordsData[cst::COORD_SYSTEM_DATA_LENGTH];
         unsigned int _vboID;
     };
 

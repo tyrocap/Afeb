@@ -12,11 +12,18 @@
 
 namespace Afeb {
 
+    namespace cst {
+        const int SCREEN_WIDTH = 1224;
+        const int SCREEN_HEIGHT = 868;
+        const int OPENGL_LINE_WIDTH = 2;
+    }
+
+
     MainWindow::MainWindow() {
 
         _window = nullptr;
-        _screenWidth = 1224;
-        _screenHeight = 868;
+        _screenWidth = cst::SCREEN_WIDTH;
+        _screenHeight = cst::SCREEN_HEIGHT;
         _windowState = WindowState::ON;
     }
 
@@ -87,10 +94,11 @@ namespace Afeb {
         // Shaders
         _shaderProgram.use();
 
-        glLineWidth(2);
+        glLineWidth(cst::OPENGL_LINE_WIDTH);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        glm::vec3 positions[3] = {glm::vec3(-0.5f, -0.5f, 0.0f),
+        glm::vec3 positions[cst::TRIANGLE_POINTS] = {
+            glm::vec3(-0.5f, -0.5f, 0.0f),
             glm::vec3(0.0f, 0.5f, 0.0f),
             glm::vec3(0.5f, -0.5f, 0.0f)};
         Triangle triangle(positions, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -98,7 +106,7 @@ namespace Afeb {
         // transformation matrix
         glm::mat4 m(1.0f);
 
-        m = glm::translate(m, glm::vec3(0.0f, 0.5f, 0.0f));
+        m = glm::translate(m, glm::vec3(0.5f, 0.5f, 0.0f));
         m = glm::rotate(m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         m = glm::scale(m, glm::vec3(0.9f, 0.5f, 0.0f));
 

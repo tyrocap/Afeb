@@ -15,6 +15,7 @@ namespace Afeb {
         ON, OFF
     };
 
+
     class MainWindow { //MainGame
     public:
         MainWindow();

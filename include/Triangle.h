@@ -7,6 +7,11 @@
 #include <glm/glm.hpp>
 
 namespace Afeb {
+
+    namespace cst {
+        const int TRIANGLE_POINTS = 3;
+    }
+
     class Triangle {
     public:
         Triangle(glm::vec3 positions[], glm::vec3 color);
@@ -17,7 +22,7 @@ namespace Afeb {
         void transform(glm::mat4 &transMatrix);
 
     private:
-        glm::vec3 _positions[3];
+        glm::vec3 _positions[cst::TRIANGLE_POINTS];
         glm::vec3 _color;
         unsigned int _vboID;
     };
