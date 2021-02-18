@@ -4,7 +4,7 @@
 
 
 int main(int argc, char* argv[]) {
-    MainWindow mainWindow;
+    Afeb::MainWindow mainWindow;
     mainWindow.run();
 
     return 0;

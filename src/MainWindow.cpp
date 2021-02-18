@@ -1,125 +1,121 @@
 //
 // Created by adam on 2/14/21.
 //
+
 #include "../include/MainWindow.h"
-#include <iostream>
+
 #include <glm/ext/matrix_transform.hpp>
+#include <iostream>
+
 #include "Error.h"
 #include "Triangle.h"
 
+namespace Afeb {
 
+    MainWindow::MainWindow() {
 
-MainWindow::MainWindow() {
-    _window = nullptr;
-    _screenWidth = 1224;
-    _screenHeight = 868;
-    _windowState = WindowState::ON;
-}
-
-MainWindow::~MainWindow() {
-
-}
-
-void MainWindow::run() {
-    initSystems();
-    _coordSystem.init(glm::vec3(-1.0f, 0.0f, 1.0f),
-                      glm::vec3(1.0f, 0.0f, 1.0f),
-                      glm::vec3(0.0f, 1.0f,  1.0f),
-                      glm::vec3(0.0f, -1.0f, 1.0f),
-                      glm::vec3(0.0f, 0.0f, 0.0f));
-    mainLoop();
-}
-
-void MainWindow::initSystems() {
-    SDL_Init(SDL_INIT_EVERYTHING);
-
-    _window = SDL_CreateWindow("Afeb", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                     _screenWidth, _screenHeight, SDL_WINDOW_OPENGL);
-    if (_window == nullptr) {
-        fatalError("SDL Window could not be created!");
+        _window = nullptr;
+        _screenWidth = 1224;
+        _screenHeight = 868;
+        _windowState = WindowState::ON;
     }
 
-    // OpenGL initilization logic
-    SDL_GLContext glContext = SDL_GL_CreateContext(_window);
-    if (glContext == nullptr) {
-        fatalError("SDL_GL context could not be created!");
+    MainWindow::~MainWindow() {
+        _window = nullptr;
     }
 
-    GLenum error = glewInit();
-    if (error != GLEW_OK) {
-        fatalError("Could not initilize glew!");
+    void MainWindow::run() {
+        initSystems();
+        mainLoop();
     }
 
-    // set up two buffers
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    void MainWindow::initSystems() {
+        SDL_Init(SDL_INIT_EVERYTHING);
 
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0);
+        _window = SDL_CreateWindow("Afeb", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            _screenWidth, _screenHeight, SDL_WINDOW_OPENGL);
+        if (_window == nullptr) {
+            fatalError("SDL Window could not be created!");
+        }
 
-    initShaders();
+        // OpenGL initilization logic
+        SDL_GLContext glContext = SDL_GL_CreateContext(_window);
+        if (glContext == nullptr) {
+            fatalError("SDL_GL context could not be created!");
+        }
 
-}
+        GLenum error = glewInit();
+        if (error != GLEW_OK) {
+            fatalError("Could not initilize glew!");
+        }
 
-void MainWindow::mainLoop() {
-    while (_windowState != WindowState::OFF) {
-        processInput();
-        drawWindow();
+        // set up two buffers
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0);
+
+        initShaders();
     }
 
-}
+    void MainWindow::mainLoop() {
+        while (_windowState != WindowState::OFF) {
+            processInput();
+            drawWindow();
+        }
+    }
 
-void MainWindow::processInput() {
-    SDL_Event evnt;
+    void MainWindow::processInput() {
+        SDL_Event evnt;
 
-    while (SDL_PollEvent(&evnt)) {
-        switch (evnt.type) {
+        while (SDL_PollEvent(&evnt)) {
+            switch (evnt.type) {
             case SDL_QUIT:
                 _windowState = WindowState::OFF;
                 break;
             case SDL_MOUSEMOTION:
                 std::cout << evnt.motion.x << " " << evnt.motion.y << std::endl;
+            }
         }
     }
 
-}
+    void MainWindow::drawWindow() {
+        // Set the base depth to 1.0
+        glClearDepth(1.0);
+        // Clear the color and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-void MainWindow::drawWindow() {
-    // Set the base depth to 1.0
-    glClearDepth(1.0);
-    // Clear the color and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Shaders
+        _shaderProgram.use();
 
-    // Shaders
-    _shaderProgram.use();
+        glLineWidth(2);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    glLineWidth(2);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glm::vec3 positions[3] = {glm::vec3(-0.5f, -0.5f, 0.0f),
+            glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(0.5f, -0.5f, 0.0f)};
+        Triangle triangle(positions, glm::vec3(1.0f, 0.0f, 0.0f));
 
-    glm::vec3 positions[3] = {glm::vec3(-0.5f, -0.5f, 0.0f),
-                              glm::vec3(0.0f, 0.5f, 0.0f),
-                              glm::vec3(0.5f, -0.5f, 0.0f)};
-    Triangle triangle(positions, glm::vec3(1.0f, 0.0f, 0.0f));
+        // transformation matrix
+        glm::mat4 m(1.0f);
 
-    // transformation matrix
-    glm::mat4 m(1.0f);
+        m = glm::translate(m, glm::vec3(0.0f, 0.5f, 0.0f));
+        m = glm::rotate(m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        m = glm::scale(m, glm::vec3(0.9f, 0.5f, 0.0f));
 
-    //m = glm::translate(m, glm::vec3(0.0f, 0.5f, 0.0f));
-    //m = glm::rotate(m, glm::radians(70.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    //m = glm::scale(m, glm::vec3(0.5f, 0.05f, 0.0f));
+        triangle.transform(m);
+        triangle.draw();
 
-    triangle.transform(m);
-    triangle.draw();
+        _coordSystem.draw();
 
-    _coordSystem.draw();
+        _shaderProgram.unuse();
 
-    _shaderProgram.unuse();
+        // Swap buffers and draw everything to the screen
+        SDL_GL_SwapWindow(_window);
+    }
 
+    void MainWindow::initShaders() {
+        _shaderProgram.compileShaders("./shaders/basic.vert", "./shaders/basic.frag");
+        _shaderProgram.linkShaders();
+    }
 
-    // Swap buffers and draw everything to the screen
-    SDL_GL_SwapWindow(_window);
-}
-
-void MainWindow::initShaders() {
-    _shaderProgram.compileShaders("./shaders/basic.vert",
-                                  "./shaders/basic.frag");
-    _shaderProgram.linkShaders();
-}
+} // namespace Afeb

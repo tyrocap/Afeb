@@ -8,31 +8,23 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp>
 
+constexpr int COORD_SYSTEM_DATA_LENGTH = 528;
 
-class CoordSystem {
-public:
-    CoordSystem();
-    ~CoordSystem();
+namespace Afeb {
+    class CoordSystem {
+    public:
+        CoordSystem();
+        ~CoordSystem();
 
-    void init(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, glm::vec3 pt4, glm::vec3 color);
-    void draw();
+        void draw();
 
-private:
-    // X and Y axes position coords (xyz)
-    float _pt1X, _pt1Y, _pt1Z,
-         _pt2X, _pt2Y, _pt2Z,
-         _pt3X, _pt3Y, _pt3Z,
-         _pt4X, _pt4Y, _pt4Z;
+    private:
+        void init();
 
-    // X and Y axes color coords (rgb)
-    float _clR, _clG, _clB;
+        float _xYCoordsData[COORD_SYSTEM_DATA_LENGTH];
+        unsigned int _vboID;
+    };
 
-    // X axis lines coords
-    float _xAxisLinesCoords[252];
-    float _yAxisLinesCoords[252];
-
-    unsigned int _vboID;
-};
-
+} // namespace Afeb
 
 #endif //AFEB_COORDSYSTEM_H

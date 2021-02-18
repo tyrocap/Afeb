@@ -10,36 +10,38 @@
 #include "CoordSystem.h"
 #include "GLSLProgram.h"
 
-enum class WindowState {
-    ON, OFF
-};
+namespace Afeb {
+    enum class WindowState {
+        ON, OFF
+    };
 
-class MainWindow { //MainGame
-public:
-    MainWindow();
-    ~MainWindow();
+    class MainWindow { //MainGame
+    public:
+        MainWindow();
+        ~MainWindow();
 
-    void run();
+        void run();
 
 
-private:
+    private:
 
-    void initSystems();
-    void mainLoop(); // gameLoop
-    void drawWindow(); // drawGame
-    void processInput();
-    void initShaders();
+        void initSystems();
+        void mainLoop(); // gameLoop
+        void drawWindow(); // drawGame
+        void processInput();
+        void initShaders();
 
-    SDL_Window* _window;
-    int _screenWidth;
-    int _screenHeight;
+        SDL_Window* _window;
+        int _screenWidth;
+        int _screenHeight;
 
-    WindowState _windowState;
-    CoordSystem _coordSystem;
+        WindowState _windowState;
+        CoordSystem _coordSystem;
 
-    GLSLProgram _shaderProgram;
+        GLSLProgram _shaderProgram;
 
-};
+    };
+}
 
 
 #endif //AFEB_MAINWINDOW_H

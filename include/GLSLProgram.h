@@ -5,29 +5,30 @@
 #ifndef AFEB_GLSLPROGRAM_H
 #define AFEB_GLSLPROGRAM_H
 
-#include <string>
 #include <GL/glew.h>
+#include <string>
 
-class GLSLProgram {
-public:
-    GLSLProgram();
-    ~GLSLProgram();
+namespace Afeb {
+    class GLSLProgram {
+    public:
+        GLSLProgram();
+        ~GLSLProgram();
 
-    void compileShaders(const std::string& vertexShaderFilePath,
-                        const std::string& fragmentShaderFilePath);
+        void compileShaders(const std::string& vertexShaderFilePath,
+            const std::string& fragmentShaderFilePath);
 
-    void linkShaders();
+        void linkShaders();
 
-    void use();
-    void unuse();
-private:
-    void compileShader(const std::string& filePath, unsigned int id);
-    unsigned int _programID;
-    unsigned int _vertexShaderID;
-    unsigned int _fragmentShaderID;
+        void use();
+        void unuse();
 
+    private:
+        void compileShader(const std::string& filePath, unsigned int id);
+        unsigned int _programID;
+        unsigned int _vertexShaderID;
+        unsigned int _fragmentShaderID;
+    };
 
-};
-
+} // namespace Afeb
 
 #endif //AFEB_GLSLPROGRAM_H

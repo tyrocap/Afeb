@@ -7,7 +7,8 @@
 
 #include <string>
 
-extern void fatalError(std::string errorString);
+namespace Afeb {
+    extern void fatalError(std::string errorString);
+}
 
 #endif //AFEB_ERROR_H
-
