@@ -2,23 +2,23 @@
 // Created by adam on 2/15/21.
 //
 
-#include "GLSLProgram.h"
-#include "Error.h"
+#include "GlslProgram.h"
 #include <fstream>
 #include <vector>
+#include "Error.h"
 
 namespace Afeb {
-    GLSLProgram::GLSLProgram() : _programID(0), _vertexShaderID(0), _fragmentShaderID(0)
+    GlslProgram::GlslProgram() : _programID(0), _vertexShaderID(0), _fragmentShaderID(0)
     {
 
     }
 
-    GLSLProgram::~GLSLProgram()
+    GlslProgram::~GlslProgram()
     {
 
     }
 
-    void GLSLProgram::compileShaders(const std::string& vertexShaderFilePath,
+    void GlslProgram::compileShaders(const std::string& vertexShaderFilePath,
         const std::string& fragmentShaderFilePath)
     {
         _vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -34,7 +34,7 @@ namespace Afeb {
         compileShader(fragmentShaderFilePath, _fragmentShaderID);
     }
 
-    void GLSLProgram::linkShaders()
+    void GlslProgram::linkShaders()
     {
         _programID = glCreateProgram();
         glAttachShader(_programID, _vertexShaderID);
@@ -69,7 +69,7 @@ namespace Afeb {
         glDeleteShader(_fragmentShaderID);
     }
 
-    void GLSLProgram::compileShader(const std::string& filePath, unsigned int id)
+    void GlslProgram::compileShader(const std::string& filePath, unsigned int id)
     {
         std::ifstream vertexFile(filePath);
         if (vertexFile.fail()) {
@@ -106,13 +106,13 @@ namespace Afeb {
         }
     }
 
-    void GLSLProgram::use()
+    void GlslProgram::use()
     {
         glUseProgram(_programID);
         glEnableVertexAttribArray(0);
     }
 
-    void GLSLProgram::unuse()
+    void GlslProgram::unuse()
     {
         glUseProgram(0);
         glDisableVertexAttribArray(0);

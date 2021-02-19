@@ -9,10 +9,10 @@
 #include <string>
 
 namespace Afeb {
-    class GLSLProgram {
+    class GlslProgram {
     public:
-        GLSLProgram();
-        ~GLSLProgram();
+        GlslProgram();
+        ~GlslProgram();
 
         void compileShaders(const std::string& vertexShaderFilePath,
             const std::string& fragmentShaderFilePath);

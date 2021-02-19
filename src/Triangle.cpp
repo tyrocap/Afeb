@@ -8,9 +8,6 @@
 
 namespace Afeb {
 
-    namespace cst {
-    }
-
     Triangle::Triangle(const glm::vec3* positions, const glm::vec3* color) {
         int idx = 0;
         for (int i = 0; i < cst::TRIANGLE_POINTS; ++i) {
@@ -54,7 +51,7 @@ namespace Afeb {
     void Triangle::transform(const glm::mat4& transMatrix) {
 
         glm::vec4 newPositions[cst::TRIANGLE_POINTS];
-        int idx = 0, idx1 = 0; // from 18 total, these need to access 0,1,2,6,7,8,12,13,14
+        int idx = 0, idx1 = 0; // from 18 in total, these need to access 0,1,2,6,7,8,12,13,14
         for (int i = 0; i < cst::TRIANGLE_POINTS; ++i) {
             glm::vec3 oldPos(_vertexData[idx], _vertexData[idx + 1], _vertexData[idx + 2]);
             newPositions[i] = transMatrix * glm::vec4(oldPos, 1.0);

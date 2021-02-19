@@ -5,10 +5,10 @@
 #ifndef AFEB_MAINWINDOW_H
 #define AFEB_MAINWINDOW_H
 
-#include <SDL.h>
 #include <GL/glew.h>
+#include <SDL.h>
 #include "CoordSystem.h"
-#include "GLSLProgram.h"
+#include "GlslProgram.h"
 #include "Triangle.h"
 
 struct Coords {
@@ -44,10 +44,14 @@ namespace Afeb {
         int _screenWidth;
         int _screenHeight;
 
+        // For Dear ImGui
+        bool _temp;
+        float _speed;
+
         WindowState _windowState;
         CoordSystem _coordSystem;
 
-        GLSLProgram _shaderProgram;
+        GlslProgram _shaderProgram;
 
 
     };
