@@ -4,25 +4,23 @@
 
 #include "Triangle.h"
 #include <GL/glew.h>
+#include <iostream>
 
 namespace Afeb {
 
     namespace cst {
-        const int TRIANGLE_DATA_LENGTH = 18; // 6 per point (3 position & 3 color)
-        const int INDICES_TO_DRAW = 3;
-        const int NUMBER_OF_COMPONENTS_PER_VERTEX = 3;
-        const int BYTE_OFFSET = 6;
-        const int OFFSET_TO_NEXT_VERTEX_ATTRIB = 3;
-        const int FIRST_ATTRIBUTE = 0; // position
-        const int SECOND_ATTRIBUTE = 1; // color
+    }
 
-    } // namespace cst
-
-    Triangle::Triangle(glm::vec3 positions[], glm::vec3 color) {
+    Triangle::Triangle(const glm::vec3* positions, const glm::vec3* color) {
+        int idx = 0;
         for (int i = 0; i < cst::TRIANGLE_POINTS; ++i) {
-            _positions[i] = positions[i];
+            _vertexData[idx++] = positions[i].x;
+            _vertexData[idx++] = positions[i].y;
+            _vertexData[idx++] = positions[i].z;
+            _vertexData[idx++] = color->x;
+            _vertexData[idx++] = color->y;
+            _vertexData[idx++] = color->z;
         }
-        _color = color;
         glGenBuffers(1, &_vboID);
         copyToBuffer();
     }
@@ -53,33 +51,28 @@ namespace Afeb {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void Triangle::transform(glm::mat4& transMatrix) {
+    void Triangle::transform(const glm::mat4& transMatrix) {
+
         glm::vec4 newPositions[cst::TRIANGLE_POINTS];
+        int idx = 0, idx1 = 0; // from 18 total, these need to access 0,1,2,6,7,8,12,13,14
         for (int i = 0; i < cst::TRIANGLE_POINTS; ++i) {
-            newPositions[i] = transMatrix * glm::vec4(_positions[i], 1.0);
-            _positions[i].x = newPositions[i].x;
-            _positions[i].y = newPositions[i].y;
-            _positions[i].z = newPositions[i].z;
+            glm::vec3 oldPos(_vertexData[idx], _vertexData[idx + 1], _vertexData[idx + 2]);
+            newPositions[i] = transMatrix * glm::vec4(oldPos, 1.0);
+            _vertexData[idx1] = newPositions[i].x;
+            _vertexData[idx1 + 1] = newPositions[i].y;
+            _vertexData[idx1 + 2] = newPositions[i].z;
+            idx += 6;
+            idx1 += 6;
         }
         copyToBuffer();
     }
 
     void Triangle::copyToBuffer() {
-        float vertexData[cst::TRIANGLE_DATA_LENGTH];
-        int idx = 0;
-        for (int i = 0; i < cst::TRIANGLE_POINTS; ++i) {
-            vertexData[idx++] = _positions[i].x;
-            vertexData[idx++] = _positions[i].y;
-            vertexData[idx++] = _positions[i].z;
-            vertexData[idx++] = _color.x;
-            vertexData[idx++] = _color.y;
-            vertexData[idx++] = _color.z;
-        }
         // Bind buffer
         glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 
         // Copy the data to GPU
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(_vertexData), _vertexData, GL_STATIC_DRAW);
 
         // Unbind buffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);

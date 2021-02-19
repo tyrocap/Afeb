@@ -8,7 +8,6 @@
 #include <iostream>
 
 #include "Error.h"
-#include "Triangle.h"
 
 namespace Afeb {
 
@@ -16,11 +15,9 @@ namespace Afeb {
         const int SCREEN_WIDTH = 1224;
         const int SCREEN_HEIGHT = 868;
         const int OPENGL_LINE_WIDTH = 2;
-    }
-
+    } // namespace cst
 
     MainWindow::MainWindow() {
-
         _window = nullptr;
         _screenWidth = cst::SCREEN_WIDTH;
         _screenHeight = cst::SCREEN_HEIGHT;
@@ -79,8 +76,9 @@ namespace Afeb {
             case SDL_QUIT:
                 _windowState = WindowState::OFF;
                 break;
-            case SDL_MOUSEMOTION:
+            case SDL_MOUSEBUTTONDOWN:
                 std::cout << evnt.motion.x << " " << evnt.motion.y << std::endl;
+                _pt1 = glm::vec3(evnt.motion.x/1224.0, evnt.motion.y/868.0, 0.0);
             }
         }
     }
@@ -101,15 +99,15 @@ namespace Afeb {
             glm::vec3(-0.5f, -0.5f, 0.0f),
             glm::vec3(0.0f, 0.5f, 0.0f),
             glm::vec3(0.5f, -0.5f, 0.0f)};
-        Triangle triangle(positions, glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::vec3 color(1.0f, 0.0f, 0.0f);
+        Triangle triangle(positions, &color);
 
         // transformation matrix
         glm::mat4 m(1.0f);
 
-        m = glm::translate(m, glm::vec3(0.5f, 0.5f, 0.0f));
-        m = glm::rotate(m, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        m = glm::scale(m, glm::vec3(0.9f, 0.5f, 0.0f));
-
+        //m = glm::translate(m, glm::vec3(0.5f, 0.5f, 0.0f));
+        //m = glm::rotate(m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        m = glm::scale(m, glm::vec3(0.5f, 0.5f, 0.0f));
         triangle.transform(m);
         triangle.draw();
 

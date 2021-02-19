@@ -9,6 +9,13 @@
 #include <GL/glew.h>
 #include "CoordSystem.h"
 #include "GLSLProgram.h"
+#include "Triangle.h"
+
+struct Coords {
+    int x;
+    int y;
+};
+
 
 namespace Afeb {
     enum class WindowState {
@@ -25,6 +32,7 @@ namespace Afeb {
 
 
     private:
+        glm::vec3 _pt1;
 
         void initSystems();
         void mainLoop(); // gameLoop
@@ -40,6 +48,7 @@ namespace Afeb {
         CoordSystem _coordSystem;
 
         GLSLProgram _shaderProgram;
+
 
     };
 }
