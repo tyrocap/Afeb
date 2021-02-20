@@ -27,6 +27,7 @@ namespace Afeb {
         _screenHeight = cst::SCREEN_HEIGHT;
         _windowState = WindowState::ON;
         _color = glm::vec3(0.0f, 0.0f, 0.0f);
+        _translate = glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
     MainWindow::~MainWindow() {
@@ -95,12 +96,7 @@ namespace Afeb {
             // From ImGui Demo Code
             static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
 
-            static bool drag_and_drop = true;
-            static bool options_menu = true;
-            static bool hdr = false;
-            ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) |
-                (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) |
-                (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+            static ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoDragDrop | ImGuiColorEditFlags_NoOptions;
 
             ImGui::Text("Color picker:");
             static bool ref_color = false;
@@ -109,7 +105,6 @@ namespace Afeb {
             static int picker_mode = 0;
 
             ImGui::Combo("Display Mode", &display_mode, "Auto/Current\0None\0RGB Only\0HSV Only\0Hex Only\0");
-            ImGui::Combo("Picker Mode", &picker_mode, "Auto/Current\0Hue bar + SV rect\0Hue wheel + SV triangle\0");
             ImGuiColorEditFlags flags = misc_flags;
 
             if (picker_mode == 1)  flags |= ImGuiColorEditFlags_PickerHueBar;
@@ -119,8 +114,20 @@ namespace Afeb {
             if (display_mode == 3) flags |= ImGuiColorEditFlags_DisplayHSV;
             if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
             ImGui::ColorPicker4("MyColor##4", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
-            _color = glm::vec3(color.x, color.y, color.z);
             // End
+
+            // Copy the changed color to member variable so
+            // it can used in drawWindow() to change
+            // color of a drawn object in the loop
+            _color = glm::vec3(color.x, color.y, color.z);
+
+
+            // Translate
+            float f1[3];
+            ImGui::SliderFloat3("translate", f1, 0.0f, 1.0f);
+            _translate.x = f1[0];
+            _translate.y = f1[1];
+            _translate.z = f1[2];
 
             drawWindow();
         }
@@ -175,10 +182,17 @@ namespace Afeb {
         // transformation matrix
         glm::mat4 m(1.0f);
 
-        //m = glm::translate(m, glm::vec3(0.5f, 0.5f, 0.0f));
+        if (_translate.x > 0) {
+            m = glm::translate(m, _translate);
+        }
         //m = glm::rotate(m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         m = glm::scale(m, glm::vec3(0.5f, 0.5f, 0.0f));
         triangle.transform(m);
+
+        // TODO: Use a flag instead of value of a member variable
+        // This is necessary because in this case, the value we
+        // are checking against might be correct value in some
+        // cases (e.g. user wants a color where 'R' = 0)
         if (_color.x > 0) {
             triangle.changeColor(_color);
         }
