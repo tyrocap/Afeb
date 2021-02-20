@@ -34,6 +34,8 @@ namespace Afeb {
     private:
         glm::vec3 _color;
         glm::vec3 _translate;
+        glm::vec3 _scale;
+        float _rotate;
 
         void initSystems();
         void mainLoop(); // gameLoop

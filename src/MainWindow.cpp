@@ -27,7 +27,9 @@ namespace Afeb {
         _screenHeight = cst::SCREEN_HEIGHT;
         _windowState = WindowState::ON;
         _color = glm::vec3(0.0f, 0.0f, 0.0f);
-        _translate = glm::vec3(0.0f, 0.0f, 0.0f);
+        _translate = glm::vec3(1.0f, 1.0f, 0.0f);
+        _scale = glm::vec3(1.0f, 1.0f, 0.0f);
+        _rotate = 0.0f;
     }
 
     MainWindow::~MainWindow() {
@@ -123,11 +125,19 @@ namespace Afeb {
 
 
             // Translate
-            float f1[3];
-            ImGui::SliderFloat3("translate", f1, 0.0f, 1.0f);
-            _translate.x = f1[0];
-            _translate.y = f1[1];
-            _translate.z = f1[2];
+            float translate[3];
+            ImGui::SliderFloat3("translate", translate, 0.0f, 1.0f);
+            _translate = glm::vec3(translate[0], translate[1], translate[2]);
+
+            // Scale
+            float scale[3];
+            ImGui::SliderFloat3("scale", scale, 0.0f, 1.0f);
+            _scale = glm::vec3(scale[0], scale[1], scale[2]);
+
+            // Translate
+            static float rotate;
+            ImGui::SliderFloat("rotate", &rotate, 0.0f, 360.0f);
+            _rotate = rotate;
 
             drawWindow();
         }
@@ -185,8 +195,12 @@ namespace Afeb {
         if (_translate.x > 0) {
             m = glm::translate(m, _translate);
         }
-        //m = glm::rotate(m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        m = glm::scale(m, glm::vec3(0.5f, 0.5f, 0.0f));
+        if (_rotate > 0) {
+            m = glm::rotate(m, glm::radians(_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+        }
+        if (_scale.x > 0) {
+            m = glm::scale(m, _scale);
+        }
         triangle.transform(m);
 
         // TODO: Use a flag instead of value of a member variable
