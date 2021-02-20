@@ -32,7 +32,7 @@ namespace Afeb {
 
 
     private:
-        glm::vec3 _pt1;
+        glm::vec3 _color;
 
         void initSystems();
         void mainLoop(); // gameLoop
@@ -43,10 +43,6 @@ namespace Afeb {
         SDL_Window* _window;
         int _screenWidth;
         int _screenHeight;
-
-        // For Dear ImGui
-        bool _temp;
-        float _speed;
 
         WindowState _windowState;
         CoordSystem _coordSystem;

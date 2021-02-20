@@ -74,4 +74,16 @@ namespace Afeb {
         // Unbind buffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+
+
+    void Triangle::changeColor(const glm::vec3& color) {
+        int idx = 3;
+        for (int i = 0; i < (cst::TRIANGLE_DATA_LENGTH / 6); ++i) {
+            _vertexData[idx++] = color.x;
+            _vertexData[idx++] = color.y;
+            _vertexData[idx++] = color.z;
+            idx += 3;
+        }
+        copyToBuffer();
+    }
 } // namespace Afeb

@@ -24,6 +24,7 @@ namespace Afeb {
         Triangle(const glm::vec3* positions, const glm::vec3* color);
         ~Triangle();
 
+        void changeColor(const glm::vec3 &color);
         void draw();
         void copyToBuffer();
         void transform(const glm::mat4 &transMatrix);

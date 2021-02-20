@@ -26,8 +26,7 @@ namespace Afeb {
         _screenWidth = cst::SCREEN_WIDTH;
         _screenHeight = cst::SCREEN_HEIGHT;
         _windowState = WindowState::ON;
-        _temp = true;
-        _speed = 23.0f;
+        _color = glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
     MainWindow::~MainWindow() {
@@ -93,11 +92,37 @@ namespace Afeb {
             ImGui_ImplSDL2_NewFrame(_window);
             ImGui::NewFrame();
 
-            ImGui::Text("Hello, world!");
+            // From ImGui Demo Code
+            static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 200.0f / 255.0f);
+
+            static bool drag_and_drop = true;
+            static bool options_menu = true;
+            static bool hdr = false;
+            ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) |
+                (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) |
+                (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+            ImGui::Text("Color picker:");
+            static bool ref_color = false;
+            static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+            static int display_mode = 0;
+            static int picker_mode = 0;
+
+            ImGui::Combo("Display Mode", &display_mode, "Auto/Current\0None\0RGB Only\0HSV Only\0Hex Only\0");
+            ImGui::Combo("Picker Mode", &picker_mode, "Auto/Current\0Hue bar + SV rect\0Hue wheel + SV triangle\0");
+            ImGuiColorEditFlags flags = misc_flags;
+
+            if (picker_mode == 1)  flags |= ImGuiColorEditFlags_PickerHueBar;
+            if (picker_mode == 2)  flags |= ImGuiColorEditFlags_PickerHueWheel;
+            if (display_mode == 1) flags |= ImGuiColorEditFlags_NoInputs;       // Disable all RGB/HSV/Hex displays
+            if (display_mode == 2) flags |= ImGuiColorEditFlags_DisplayRGB;     // Override display mode
+            if (display_mode == 3) flags |= ImGuiColorEditFlags_DisplayHSV;
+            if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
+            ImGui::ColorPicker4("MyColor##4", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
+            _color = glm::vec3(color.x, color.y, color.z);
+            // End
 
             drawWindow();
-
-
         }
     }
 
@@ -154,6 +179,9 @@ namespace Afeb {
         //m = glm::rotate(m, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         m = glm::scale(m, glm::vec3(0.5f, 0.5f, 0.0f));
         triangle.transform(m);
+        if (_color.x > 0) {
+            triangle.changeColor(_color);
+        }
         triangle.draw();
 
         _coordSystem.draw();
