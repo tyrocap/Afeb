@@ -23,7 +23,7 @@ namespace Afeb {
     };
 
 
-    class MainWindow { //MainGame
+    class MainWindow {
     public:
         MainWindow();
         ~MainWindow();
@@ -32,14 +32,15 @@ namespace Afeb {
 
 
     private:
-        glm::vec3 _color;
-        glm::vec3 _translate;
-        glm::vec3 _scale;
-        float _rotate;
+        bool _flags[4] = {0};
+        glm::vec3 _color = glm::vec3(0.0f);
+        glm::vec3 _translate{};
+        glm::vec3 _scale{};
+        float _rotate{};
 
         void initSystems();
-        void mainLoop(); // gameLoop
-        void drawWindow(); // drawGame
+        void mainLoop();
+        void drawWindow();
         void processInput();
         void initShaders();
 
