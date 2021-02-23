@@ -8,7 +8,7 @@
 namespace Afeb {
 
     namespace cst {
-        const int XY_AXES_DATA_LENGTH = 24;
+        const int XY_AXES_DATA_LENGTH = 36;
     }
 
 
@@ -29,10 +29,13 @@ namespace Afeb {
 
         // Set X and Y axes points (= position and color coords)
         float xYCoords[cst::XY_AXES_DATA_LENGTH] = {
-            -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f
+            -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+
         };
         for (int i = 0; i < cst::XY_AXES_DATA_LENGTH; ++i) {
             _xYCoordsData[index++] = xYCoords[i];
@@ -100,7 +103,7 @@ namespace Afeb {
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
         // Draw lines
-        glDrawArrays(GL_LINES, 0, 88);
+        glDrawArrays(GL_LINES, 0, 92);
 
         // Clean up
         glDisableVertexAttribArray(0);

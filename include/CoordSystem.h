@@ -12,7 +12,7 @@
 namespace Afeb {
 
     namespace cst {
-        const int COORD_SYSTEM_DATA_LENGTH = 528;
+        const int COORD_SYSTEM_DATA_LENGTH = 540;
     }
 
     class CoordSystem {

@@ -18,6 +18,7 @@ namespace Afeb {
             const std::string& fragmentShaderFilePath);
 
         void linkShaders();
+        unsigned int getID();
 
         void use();
         void unuse();

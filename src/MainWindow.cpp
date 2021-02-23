@@ -5,6 +5,7 @@
 #include "../include/MainWindow.h"
 
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/glm.hpp>
 #include <iostream>
 
@@ -13,12 +14,14 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
+#include <ctime>
+
 namespace Afeb {
 
     namespace cst {
         const int SCREEN_WIDTH = 1224;
         const int SCREEN_HEIGHT = 868;
-        const int OPENGL_LINE_WIDTH = 2;
+        const int OPENGL_LINE_WIDTH = 4;
         const int COLOR_FLAG_INDEX = 0;
         const int TRANSLATE_FLAG_INDEX = 1;
         const int ROTATE_FLAG_INDEX = 2;
@@ -198,11 +201,27 @@ namespace Afeb {
         _shaderProgram.use();
 
         glLineWidth(cst::OPENGL_LINE_WIDTH);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        // Camera related stuff
+        const float radius = 30.0f;
+        float camX = sin(_curTime * radius);
+        float camZ = cos(_curTime * radius);
+        std::cout << "curTime: " << _curTime << std::endl;
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::lookAt(glm::vec3(camX, 0.5f, camZ),
+                            glm::vec3(0.0f, 0.0f, 0.0f),
+                            glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 perspective = glm::perspective(15.0f, (float)cst::SCREEN_WIDTH/(float)cst::SCREEN_HEIGHT, 0.01f, 100.0f);
+        view = perspective * view;
+        std::string name = "view";
+        glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), name.c_str()), 1, GL_FALSE, &view[0][0]);
+
 
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
-            glm::vec3(-0.5f, -0.5f, 0.0f),
-            glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(-0.5f, -0.5f, 0.5f),
+            glm::vec3(0.0f, 0.5f, -0.5f),
             glm::vec3(0.5f, -0.5f, 0.0f)};
         glm::vec3 color(0.0f, 0.0f, 0.0f);
         Triangle triangle(positions, &color);
@@ -231,6 +250,8 @@ namespace Afeb {
 
         // Swap buffers and draw everything to the screen
         SDL_GL_SwapWindow(_window);
+
+        _curTime += 0.001f;
     }
 
     void MainWindow::initShaders() {

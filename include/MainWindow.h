@@ -38,6 +38,8 @@ namespace Afeb {
         glm::vec3 _scale{};
         float _rotate{};
 
+        float _curTime = 1.0f;
+
         void initSystems();
         void mainLoop();
         void drawWindow();

@@ -117,4 +117,8 @@ namespace Afeb {
         glUseProgram(0);
         glDisableVertexAttribArray(0);
     }
+
+    unsigned int GlslProgram::getID() {
+        return _programID;
+    }
 } // namespace Afeb
