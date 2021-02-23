@@ -25,7 +25,7 @@ target_include_directories(imgui PUBLIC ${SDL2_INCLUDE_DIRS})
 target_include_directories(imgui PUBLIC imgui/ imgui/backends/)
 target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_CUSTOM=<SDL_opengl.h> GL_GLEXT_PROTOTYPES=1)
 
-add_executable(Afeb main.cpp src/MainWindow.cpp include/MainWindow.h src/CoordSystem.cpp include/CoordSystem.h src/GlslProgram.cpp include/GlslProgram.h include/Error.h src/Error.cpp src/Triangle.cpp include/Triangle.h)
+add_executable(Afeb main.cpp src/MainWindow.cpp include/MainWindow.h src/CoordSystem.cpp include/CoordSystem.h src/GlslProgram.cpp include/GlslProgram.h include/Error.h src/Error.cpp src/Triangle.cpp include/Triangle.h src/Camera3D.cpp include/Camera3D.h)
 
 target_include_directories(Afeb PUBLIC ${OPENGL_INCLUDE_DIR})
 target_include_directories(Afeb PUBLIC ${SDL2_INCLUDE_DIRS})

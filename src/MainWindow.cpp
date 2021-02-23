@@ -5,16 +5,16 @@
 #include "../include/MainWindow.h"
 
 #include <glm/ext/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <iostream>
 
-#include "Error.h"
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
-#include <ctime>
+#include "Camera3D.h"
+#include "Error.h"
 
 namespace Afeb {
 
@@ -26,18 +26,18 @@ namespace Afeb {
         const int TRANSLATE_FLAG_INDEX = 1;
         const int ROTATE_FLAG_INDEX = 2;
         const int SCALE_FLAG_INDEX = 3;
+        const int DRAW_FILLED_FLAG_INDEX = 4;
     } // namespace cst
 
-    MainWindow::MainWindow() {
-        _window = nullptr;
-        _screenWidth = cst::SCREEN_WIDTH;
-        _screenHeight = cst::SCREEN_HEIGHT;
-        _windowState = WindowState::ON;
-        _color = glm::vec3();
-        _translate = glm::vec3();
-        _rotate = 0.0f;
-        _scale = glm::vec3();
-    }
+    MainWindow::MainWindow() : _window(nullptr),
+                               _screenWidth(cst::SCREEN_WIDTH),
+                               _screenHeight(cst::SCREEN_HEIGHT),
+                               _windowState(WindowState::ON),
+                               _color(glm::vec3()),
+                               _translate(glm::vec3()),
+                               _rotate(0.0f),
+                               _scale(glm::vec3()),
+                               _camera(15.0f, (float)cst::SCREEN_WIDTH / (float)cst::SCREEN_HEIGHT, 0.01f, 100.0f){};
 
     MainWindow::~MainWindow() {
         _window = nullptr;
@@ -163,6 +163,13 @@ namespace Afeb {
                 _flags[cst::SCALE_FLAG_INDEX] = true;
             }
 
+            // Draw Filled
+            static bool drawFilled = false;
+            ImGui::Checkbox("Draw Filled", &drawFilled);
+            if (_flags[cst::DRAW_FILLED_FLAG_INDEX] != drawFilled) {
+                _flags[cst::DRAW_FILLED_FLAG_INDEX] = drawFilled;
+            }
+
             drawWindow();
         }
     }
@@ -175,6 +182,29 @@ namespace Afeb {
             ImGui_ImplSDL2_ProcessEvent(&evnt);
             if (evnt.type == SDL_QUIT || (evnt.type == SDL_WINDOWEVENT && evnt.window.event == SDL_WINDOWEVENT_CLOSE && evnt.window.windowID == SDL_GetWindowID(_window))) {
                 _windowState = WindowState::OFF;
+            }
+            if (evnt.type == SDL_KEYDOWN) {
+                switch (evnt.key.keysym.sym) {
+                case SDLK_UP:
+                    _camera.ChangePosition(1);
+                    std::cout << "UP was pressed" << std::endl;
+                    break;
+                case SDLK_DOWN:
+                    _camera.ChangePosition(2);
+                    std::cout << "DOWN was pressed" << std::endl;
+                    break;
+                case SDLK_LEFT:
+                    _camera.ChangePosition(3);
+                    std::cout << "LEFT was pressed" << std::endl;
+                    break;
+                case SDLK_RIGHT:
+                    _camera.ChangePosition(4);
+                    std::cout << "RIGHT was pressed" << std::endl;
+                    break;
+                default:
+                    std::cout << "N/A" << std::endl;
+                    break;
+                }
             }
         }
         /*
@@ -201,30 +231,54 @@ namespace Afeb {
         _shaderProgram.use();
 
         glLineWidth(cst::OPENGL_LINE_WIDTH);
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        if (_flags[cst::DRAW_FILLED_FLAG_INDEX]) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        glEnable(GL_DEPTH_TEST);
 
+        /*
         // Camera related stuff
         const float radius = 30.0f;
         float camX = sin(_curTime * radius);
         float camZ = cos(_curTime * radius);
-        std::cout << "curTime: " << _curTime << std::endl;
+         */
 
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::lookAt(glm::vec3(camX, 0.5f, camZ),
-                            glm::vec3(0.0f, 0.0f, 0.0f),
-                            glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 perspective = glm::perspective(15.0f, (float)cst::SCREEN_WIDTH/(float)cst::SCREEN_HEIGHT, 0.01f, 100.0f);
-        view = perspective * view;
+
+
+        glm::mat4 view, perspective;
+        _camera.GetMatrices(perspective, view);
+
         std::string name = "view";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), name.c_str()), 1, GL_FALSE, &view[0][0]);
 
-
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
+            glm::vec3(0.0f, 0.5f, 0.0f),
             glm::vec3(-0.5f, -0.5f, 0.5f),
-            glm::vec3(0.0f, 0.5f, -0.5f),
-            glm::vec3(0.5f, -0.5f, 0.0f)};
+            glm::vec3(0.5f, -0.5f, 0.5f)};
         glm::vec3 color(0.0f, 0.0f, 0.0f);
+
+        glm::vec3 positions1[cst::TRIANGLE_POINTS] = {
+            glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(0.5f, -0.5f, 0.5f),
+            glm::vec3(0.5f, -0.5f, -0.5f)};
+        glm::vec3 color1(0.0f, 1.0f, 0.5f);
+
+        glm::vec3 positions2[cst::TRIANGLE_POINTS] = {
+            glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(0.5f, -0.5f, -0.5f),
+            glm::vec3(-0.5f, -0.5f, -0.5f)};
+        glm::vec3 color2(1.0f, 0.0f, 0.0f);
+
+        glm::vec3 positions3[cst::TRIANGLE_POINTS] = {
+            glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(-0.5f, -0.5f, -0.5f),
+            glm::vec3(-0.5f, -0.5f, 0.5f)};
+        glm::vec3 color3(0.3f, 0.3f, 0.3f);
+
         Triangle triangle(positions, &color);
+        Triangle triangle1(positions1, &color1);
+        Triangle triangle2(positions2, &color2);
+        Triangle triangle3(positions3, &color3);
 
         // transformation matrix
         glm::mat4 m(1.0f);
@@ -239,7 +293,15 @@ namespace Afeb {
             m = glm::scale(m, _scale);
 
         triangle.transform(m);
+        triangle1.transform(m);
+        triangle2.transform(m);
+        triangle3.transform(m);
+
         triangle.draw();
+        triangle1.draw();
+        triangle2.draw();
+        triangle3.draw();
+
         _coordSystem.draw();
 
         _shaderProgram.unuse();
@@ -251,7 +313,7 @@ namespace Afeb {
         // Swap buffers and draw everything to the screen
         SDL_GL_SwapWindow(_window);
 
-        _curTime += 0.001f;
+        _curTime += 0.0005f;
     }
 
     void MainWindow::initShaders() {

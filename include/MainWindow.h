@@ -10,6 +10,7 @@
 #include "CoordSystem.h"
 #include "GlslProgram.h"
 #include "Triangle.h"
+#include "Camera3D.h"
 
 struct Coords {
     int x;
@@ -32,7 +33,7 @@ namespace Afeb {
 
 
     private:
-        bool _flags[4] = {0};
+        bool _flags[5] = {0};
         glm::vec3 _color = glm::vec3(0.0f);
         glm::vec3 _translate{};
         glm::vec3 _scale{};
@@ -54,6 +55,7 @@ namespace Afeb {
         CoordSystem _coordSystem;
 
         GlslProgram _shaderProgram;
+        Camera3D _camera;
 
 
     };
