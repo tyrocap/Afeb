@@ -40,6 +40,7 @@ namespace Afeb {
         float _rotate{};
 
         float _curTime = 1.0f;
+        float _degreesRotated = 0.0f;
 
         void initSystems();
         void mainLoop();

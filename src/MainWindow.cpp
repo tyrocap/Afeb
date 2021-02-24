@@ -7,6 +7,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 #include "imgui.h"
@@ -20,7 +21,7 @@ namespace Afeb {
 
     namespace cst {
         const int SCREEN_WIDTH = 1224;
-        const int SCREEN_HEIGHT = 868;
+        const int SCREEN_HEIGHT = 918;
         const int OPENGL_LINE_WIDTH = 4;
         const int COLOR_FLAG_INDEX = 0;
         const int TRANSLATE_FLAG_INDEX = 1;
@@ -37,7 +38,7 @@ namespace Afeb {
                                _translate(glm::vec3()),
                                _rotate(0.0f),
                                _scale(glm::vec3()),
-                               _camera(15.0f, (float)cst::SCREEN_WIDTH / (float)cst::SCREEN_HEIGHT, 0.01f, 100.0f){};
+                               _camera(){};
 
     MainWindow::~MainWindow() {
         _window = nullptr;
@@ -90,6 +91,10 @@ namespace Afeb {
         // Set up platform/renderer bindings
         ImGui_ImplSDL2_InitForOpenGL(_window, glContext);
         ImGui_ImplOpenGL3_Init();
+
+        // Camera
+        _camera.setPosition(glm::vec3(0, 0, 8));
+        _camera.setViewportAspectRatio((float)cst::SCREEN_WIDTH / cst::SCREEN_HEIGHT);
     }
 
     void MainWindow::mainLoop() {
@@ -184,22 +189,31 @@ namespace Afeb {
                 _windowState = WindowState::OFF;
             }
             if (evnt.type == SDL_KEYDOWN) {
+                const float moveSpeed = 2.0;
                 switch (evnt.key.keysym.sym) {
                 case SDLK_UP:
-                    _camera.ChangePosition(1);
+                    _camera.offsetPosition(moveSpeed * _camera.forward());
                     std::cout << "UP was pressed" << std::endl;
                     break;
                 case SDLK_DOWN:
-                    _camera.ChangePosition(2);
+                    _camera.offsetPosition(moveSpeed * -_camera.forward());
                     std::cout << "DOWN was pressed" << std::endl;
                     break;
                 case SDLK_LEFT:
-                    _camera.ChangePosition(3);
+                    _camera.offsetPosition(moveSpeed * -_camera.right());
                     std::cout << "LEFT was pressed" << std::endl;
                     break;
                 case SDLK_RIGHT:
-                    _camera.ChangePosition(4);
+                    _camera.offsetPosition(moveSpeed * _camera.right());
                     std::cout << "RIGHT was pressed" << std::endl;
+                    break;
+                case SDLK_x:
+                    _camera.offsetPosition(moveSpeed * _camera.up());
+                    std::cout << "X was pressed" << std::endl;
+                    break;
+                case SDLK_c:
+                    _camera.offsetPosition(moveSpeed * -_camera.up());
+                    std::cout << "C was pressed" << std::endl;
                     break;
                 default:
                     std::cout << "N/A" << std::endl;
@@ -243,13 +257,13 @@ namespace Afeb {
         float camZ = cos(_curTime * radius);
          */
 
-
-
-        glm::mat4 view, perspective;
-        _camera.GetMatrices(perspective, view);
-
-        std::string name = "view";
-        glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), name.c_str()), 1, GL_FALSE, &view[0][0]);
+        std::string uniformCamera = "camera";
+        std::string uniformModel = "model";
+        glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
+            GL_FALSE, glm::value_ptr(_camera.matrix()));
+        glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformModel.c_str()), 1,
+            GL_FALSE, glm::value_ptr(glm::rotate(glm::mat4(),
+      glm::radians(_degreesRotated),glm::vec3(0, 1, 0))));
 
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
             glm::vec3(0.0f, 0.5f, 0.0f),
