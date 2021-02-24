@@ -93,7 +93,7 @@ namespace Afeb {
         ImGui_ImplOpenGL3_Init();
 
         // Camera
-        _camera.setPosition(glm::vec3(0, 0, 8));
+        _camera.setPosition(glm::vec3(0, 5, 8));
         _camera.setViewportAspectRatio((float)cst::SCREEN_WIDTH / cst::SCREEN_HEIGHT);
     }
 
@@ -219,7 +219,7 @@ namespace Afeb {
                     std::cout << "N/A" << std::endl;
                     break;
                 }
-            }
+           }
         }
         /*
         while (SDL_PollEvent(&evnt)) {
@@ -261,9 +261,12 @@ namespace Afeb {
         std::string uniformModel = "model";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
             GL_FALSE, glm::value_ptr(_camera.matrix()));
+        /*
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformModel.c_str()), 1,
             GL_FALSE, glm::value_ptr(glm::rotate(glm::mat4(),
-      glm::radians(_degreesRotated),glm::vec3(0, 1, 0))));
+      glm::radians(_degreesRotated),glm::vec3(0, 0, 1))));
+         */
+
 
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
             glm::vec3(0.0f, 0.5f, 0.0f),
