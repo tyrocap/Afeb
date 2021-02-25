@@ -21,9 +21,13 @@ Camera3D::Camera3D() : _position(0.0f, 0.0f, 1.0f),
                        _fieldOfView(15.0f),
                        _nearPlane(0.01f),
                        _farPlane(100.0f),
-                       _viewportAspectRatio(4.0f / 3.0f) {}
+                       _viewportAspectRatio(4.0f / 3.0f),
+                       _front(0.0f, 0.0f, -1.0f),
+                       _right(1.0f, 0.0f, 0.0f),
+                       _up(0.0f, 1.0f, 0.0f),
+                       _worldUp(_up) {}
 
-const glm::vec3 & Camera3D::position() const {
+const glm::vec3& Camera3D::position() const {
     return _position;
 }
 
@@ -61,16 +65,18 @@ void Camera3D::setNearAndFarPlanes(float nearPlane, float farPlane) {
 
 glm::mat4 Camera3D::orientation() const {
     glm::mat4 orientation(1.0f);
-    orientation = glm::rotate(orientation, glm::radians(_verticalAngle), glm::vec3(1, 0, 1));
-    orientation = glm::rotate(orientation, glm::radians(_horizontalAngle), glm::vec3(0, 1, 1));
+    orientation = glm::rotate(orientation, glm::radians(_verticalAngle), glm::vec3(1, 0, 0));
+    orientation = glm::rotate(orientation, glm::radians(_horizontalAngle), glm::vec3(0, 1, 0));
     // std::cout << "orientation: " << glm::to_string(orientation) << std::endl;
     return orientation;
 }
 
 void Camera3D::offsetOrientation(float upAngle, float rightAngle) {
+    std::cout << "olf horizontal: " << _horizontalAngle << std::endl;
     _horizontalAngle += rightAngle;
+    std::cout << "new horizontal: " << _horizontalAngle << std::endl;
     _verticalAngle += upAngle;
-    normalizeAngels();
+    normalizeAngles();
 }
 
 void Camera3D::lookAt(glm::vec3 position) {
@@ -78,7 +84,7 @@ void Camera3D::lookAt(glm::vec3 position) {
     glm::vec3 direction = glm::normalize(position - _position);
     _verticalAngle = glm::radians(asinf(-direction.y));
     _horizontalAngle = -glm::radians(atan2f(-direction.x, -direction.z));
-    normalizeAngels();
+    normalizeAngles();
 }
 
 float Camera3D::viewportAspectRatio() const {
@@ -91,42 +97,44 @@ void Camera3D::setViewportAspectRatio(float viewportAspectRatio) {
 }
 
 glm::vec3 Camera3D::forward() const {
-    glm::vec4 forward = glm::inverse(orientation()) * glm::vec4(0, 0, -1, 1);
+    //glm::vec4 forward = glm::inverse(orientation()) * glm::vec4(0, 0, -1, 1);
     // std::cout << "forward: " << glm::to_string(forward) << std::endl;
-    return glm::vec3(forward);
+    glm::vec3 forward = _mouseSensitivity * _front;
+    return forward;
 }
 
 glm::vec3 Camera3D::right() const {
-    glm::vec4 right = glm::inverse(orientation()) * glm::vec4(1, 0, 0, 1);
-    return glm::vec3(right);
+    glm::vec3 right = _mouseSensitivity * _right;
+    return right;
 }
 
 glm::vec3 Camera3D::up() const {
-    glm::vec4 up = glm::inverse(orientation()) * glm::vec4(0, 1, 0, 1);
-    return glm::vec3(up);
+    glm::vec3 up = _mouseSensitivity * _up;
+    return up;
 }
 
 glm::mat4 Camera3D::matrix() const {
-    return projection() * glm::lookAt(_position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    return projection() * glm::lookAt(_position, _position + _front, _up);
 }
 
 glm::mat4 Camera3D::projection() const {
     return glm::perspective(glm::radians(_fieldOfView), _viewportAspectRatio, _nearPlane, _farPlane);
 }
 
+/*
 glm::mat4 Camera3D::view() const {
     return orientation() * glm::translate(glm::mat4(), -_position);
 }
+ */
 
-void Camera3D::normalizeAngels() {
+void Camera3D::normalizeAngles() {
     _horizontalAngle = fmodf(_horizontalAngle, 360.0f);
     if (_horizontalAngle < 0.0f) {
         _horizontalAngle += 360.0f;
     }
     if (_verticalAngle > MaxVerticalAngle) {
         _verticalAngle = MaxVerticalAngle;
-    }
-    else if (_verticalAngle < -MaxVerticalAngle) {
+    } else if (_verticalAngle < -MaxVerticalAngle) {
         _verticalAngle = -MaxVerticalAngle;
     }
 }

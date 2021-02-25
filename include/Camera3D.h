@@ -5,6 +5,7 @@
 #ifndef AFEB__CAMERA3D_H
 #define AFEB__CAMERA3D_H
 
+#include <glm/detail/type_quat.hpp>
 #include <glm/glm.hpp>
 
 namespace Afeb {
@@ -114,6 +115,29 @@ namespace Afeb {
                  */
                  glm::mat4 view() const;
 
+                 void processMouseMovement(float xOffset, float yOffset) {
+                     xOffset *= _mouseSensitivity;
+                     yOffset *= _mouseSensitivity;
+                     _yaw += xOffset;
+                     _pitch += yOffset;
+                     if (_pitch > 89.0f) {
+                         _pitch = 89.0f;
+                     }
+                     if (_pitch < -89.0f) {
+                         _pitch = -89.0f;
+                     }
+                     updateCameraVectors();
+                 }
+                 void updateCameraVectors() {
+                     glm::vec3 front;
+                     front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+                     front.y = sin(glm::radians(_pitch));
+                     front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+                     _front = glm::normalize(front);
+                     _right = glm::normalize(glm::cross(_front, _worldUp));
+                     _up = glm::normalize(glm::cross(_right, _front));
+                 }
+
     private:
         glm::vec3 _position;
         float _horizontalAngle;
@@ -123,7 +147,15 @@ namespace Afeb {
         float _farPlane;
         float _viewportAspectRatio;
 
-        void normalizeAngels();
+        //
+        glm::vec3 _front;
+        glm::vec3 _right;
+        glm::vec3 _up;
+        glm::vec3 _worldUp;
+        float _mouseSensitivity = 0.1f;
+        float _yaw, _pitch;
+
+        void normalizeAngles();
     };
 }
 

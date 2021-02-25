@@ -93,7 +93,7 @@ namespace Afeb {
         ImGui_ImplOpenGL3_Init();
 
         // Camera
-        _camera.setPosition(glm::vec3(0, 5, 8));
+        _camera.setPosition(glm::vec3(0, 0, 4));
         _camera.setViewportAspectRatio((float)cst::SCREEN_WIDTH / cst::SCREEN_HEIGHT);
     }
 
@@ -189,7 +189,7 @@ namespace Afeb {
                 _windowState = WindowState::OFF;
             }
             if (evnt.type == SDL_KEYDOWN) {
-                const float moveSpeed = 2.0;
+                const float moveSpeed = 0.5f;
                 switch (evnt.key.keysym.sym) {
                 case SDLK_UP:
                     _camera.offsetPosition(moveSpeed * _camera.forward());
@@ -219,6 +219,9 @@ namespace Afeb {
                     std::cout << "N/A" << std::endl;
                     break;
                 }
+           }
+           if (evnt.type == SDL_MOUSEBUTTONDOWN) {
+
            }
         }
         /*
@@ -258,7 +261,7 @@ namespace Afeb {
          */
 
         std::string uniformCamera = "camera";
-        std::string uniformModel = "model";
+        // std::string uniformModel = "model";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
             GL_FALSE, glm::value_ptr(_camera.matrix()));
         /*
