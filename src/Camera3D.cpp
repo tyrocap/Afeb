@@ -18,7 +18,7 @@ static const float MaxVerticalAngle = 85.0f;
 Camera3D::Camera3D() : _position(0.0f, 0.0f, 1.0f),
                        _horizontalAngle(0.0f),
                        _verticalAngle(0.0f),
-                       _fieldOfView(15.0f),
+                       _fieldOfView(50.0f),
                        _nearPlane(0.01f),
                        _farPlane(100.0f),
                        _viewportAspectRatio(4.0f / 3.0f),
@@ -36,6 +36,7 @@ void Camera3D::setPosition(const glm::vec3& position) {
 }
 
 void Camera3D::offsetPosition(const glm::vec3& offset) {
+    std::cout << "offsetPosition" << std::endl;
     _position += offset;
 }
 
@@ -99,17 +100,17 @@ void Camera3D::setViewportAspectRatio(float viewportAspectRatio) {
 glm::vec3 Camera3D::forward() const {
     //glm::vec4 forward = glm::inverse(orientation()) * glm::vec4(0, 0, -1, 1);
     // std::cout << "forward: " << glm::to_string(forward) << std::endl;
-    glm::vec3 forward = _mouseSensitivity * _front;
+    glm::vec3 forward = _front;
     return forward;
 }
 
 glm::vec3 Camera3D::right() const {
-    glm::vec3 right = _mouseSensitivity * _right;
+    glm::vec3 right = _right;
     return right;
 }
 
 glm::vec3 Camera3D::up() const {
-    glm::vec3 up = _mouseSensitivity * _up;
+    glm::vec3 up = _up;
     return up;
 }
 

@@ -7,6 +7,8 @@
 
 #include <glm/detail/type_quat.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
 
 namespace Afeb {
     class Camera3D {
@@ -118,6 +120,7 @@ namespace Afeb {
                  void processMouseMovement(float xOffset, float yOffset) {
                      xOffset *= _mouseSensitivity;
                      yOffset *= _mouseSensitivity;
+                     std::cout << "xOffset and yOffset: " << xOffset << ", " << yOffset << std::endl;
                      _yaw += xOffset;
                      _pitch += yOffset;
                      if (_pitch > 89.0f) {
@@ -127,12 +130,14 @@ namespace Afeb {
                          _pitch = -89.0f;
                      }
                      updateCameraVectors();
+                     std::cout << "YAW AND PITCH: " << _yaw << ", " << _pitch << std::endl;
                  }
                  void updateCameraVectors() {
                      glm::vec3 front;
                      front.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
                      front.y = sin(glm::radians(_pitch));
                      front.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+                     std::cout << "front: " << glm::to_string(front) << std::endl;
                      _front = glm::normalize(front);
                      _right = glm::normalize(glm::cross(_front, _worldUp));
                      _up = glm::normalize(glm::cross(_right, _front));
@@ -152,8 +157,8 @@ namespace Afeb {
         glm::vec3 _right;
         glm::vec3 _up;
         glm::vec3 _worldUp;
-        float _mouseSensitivity = 0.1f;
-        float _yaw, _pitch;
+        float _mouseSensitivity = 0.0004f;
+        float _yaw = -90.0f, _pitch = 0.0f;
 
         void normalizeAngles();
     };

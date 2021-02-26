@@ -93,7 +93,7 @@ namespace Afeb {
         ImGui_ImplOpenGL3_Init();
 
         // Camera
-        _camera.setPosition(glm::vec3(0, 0, 4));
+        _camera.setPosition(glm::vec3(0, 0, 8));
         _camera.setViewportAspectRatio((float)cst::SCREEN_WIDTH / cst::SCREEN_HEIGHT);
     }
 
@@ -189,7 +189,7 @@ namespace Afeb {
                 _windowState = WindowState::OFF;
             }
             if (evnt.type == SDL_KEYDOWN) {
-                const float moveSpeed = 0.5f;
+                const float moveSpeed = 1.0f;
                 switch (evnt.key.keysym.sym) {
                 case SDLK_UP:
                     _camera.offsetPosition(moveSpeed * _camera.forward());
@@ -220,8 +220,16 @@ namespace Afeb {
                     break;
                 }
            }
-           if (evnt.type == SDL_MOUSEBUTTONDOWN) {
+           if (evnt.type == SDL_MOUSEMOTION) {
+               SDL_SetRelativeMouseMode(SDL_TRUE);
+               std::cout << "Mouse Event" << std::endl;
+               float lastX = cst::SCREEN_WIDTH / 2.0f;
+               float lastY = cst::SCREEN_HEIGHT / 2.0f;
+               float offsetX = lastX - evnt.motion.x;
+               float offsetY = evnt.motion.y - lastY;
+               _camera.processMouseMovement(offsetX, offsetY);
 
+               SDL_WarpMouseInWindow(_window, cst::SCREEN_WIDTH / 2, cst::SCREEN_HEIGHT / 2);
            }
         }
         /*
