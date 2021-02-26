@@ -6,8 +6,8 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 #include <iostream>
 
 #include "imgui.h"
@@ -93,7 +93,7 @@ namespace Afeb {
         ImGui_ImplOpenGL3_Init();
 
         // Camera
-        _camera.setPosition(glm::vec3(0, 0, 8));
+        _camera.setPosition(glm::vec3(0, 0, 2));
         _camera.setViewportAspectRatio((float)cst::SCREEN_WIDTH / cst::SCREEN_HEIGHT);
     }
 
@@ -181,69 +181,70 @@ namespace Afeb {
 
     void MainWindow::processInput() {
         SDL_Event evnt;
+        const float moveSpeed = 0.01f;
 
         // Forward events to Dear ImGui
         while (SDL_PollEvent(&evnt)) {
             ImGui_ImplSDL2_ProcessEvent(&evnt);
-            if (evnt.type == SDL_QUIT || (evnt.type == SDL_WINDOWEVENT && evnt.window.event == SDL_WINDOWEVENT_CLOSE && evnt.window.windowID == SDL_GetWindowID(_window))) {
-                _windowState = WindowState::OFF;
-            }
-            if (evnt.type == SDL_KEYDOWN) {
-                const float moveSpeed = 1.0f;
-                switch (evnt.key.keysym.sym) {
-                case SDLK_UP:
-                    _camera.offsetPosition(moveSpeed * _camera.forward());
-                    std::cout << "UP was pressed" << std::endl;
+            ImGuiIO& io = ImGui::GetIO();
+            if (!io.WantCaptureMouse) {
+                switch (evnt.type) {
+                case SDL_QUIT:
+                    _windowState = WindowState::OFF;
                     break;
-                case SDLK_DOWN:
-                    _camera.offsetPosition(moveSpeed * -_camera.forward());
-                    std::cout << "DOWN was pressed" << std::endl;
+                case SDL_KEYDOWN:
+                    switch (evnt.key.keysym.sym) {
+                    case SDLK_UP:
+                        _camera.offsetPosition(moveSpeed * _camera.forward());
+                        break;
+                    case SDLK_DOWN:
+                        _camera.offsetPosition(moveSpeed * -_camera.forward());
+                        break;
+                    case SDLK_LEFT:
+                        _camera.offsetPosition(moveSpeed * -_camera.right());
+                        break;
+                    case SDLK_RIGHT:
+                        _camera.offsetPosition(moveSpeed * _camera.right());
+                        break;
+                    case SDLK_x:
+                        _camera.offsetPosition(moveSpeed * _camera.up());
+                        break;
+                    case SDLK_c:
+                        _camera.offsetPosition(moveSpeed * -_camera.up());
+                        break;
+                    default:
+                        break;
+                    }
+                case SDL_MOUSEBUTTONUP:
+                    if (evnt.button.button == SDL_BUTTON_LEFT) {
+                        SDL_SetRelativeMouseMode(SDL_FALSE);
+                        _leftMousePressed = false;
+                    }
                     break;
-                case SDLK_LEFT:
-                    _camera.offsetPosition(moveSpeed * -_camera.right());
-                    std::cout << "LEFT was pressed" << std::endl;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (evnt.button.button == SDL_BUTTON_LEFT) {
+                        _leftMousePressed = true;
+                    }
                     break;
-                case SDLK_RIGHT:
-                    _camera.offsetPosition(moveSpeed * _camera.right());
-                    std::cout << "RIGHT was pressed" << std::endl;
-                    break;
-                case SDLK_x:
-                    _camera.offsetPosition(moveSpeed * _camera.up());
-                    std::cout << "X was pressed" << std::endl;
-                    break;
-                case SDLK_c:
-                    _camera.offsetPosition(moveSpeed * -_camera.up());
-                    std::cout << "C was pressed" << std::endl;
-                    break;
+                case SDL_MOUSEMOTION:
+                    std::cout << "SDL_MOUSEMOTION" << std::endl;
+                    if (_leftMousePressed) {
+                        SDL_SetRelativeMouseMode(SDL_TRUE);
+                        auto offsetX = (float)evnt.motion.xrel;
+                        auto offsetY = (float)evnt.motion.yrel;
+                        std::cout << "_cameraPosition: " << glm::to_string(_camera.position()) << std::endl;
+                        _camera.processMouseMovement(offsetX, offsetY);
+                        SDL_WarpMouseInWindow(_window, cst::SCREEN_WIDTH / 2, cst::SCREEN_HEIGHT / 2);
+                    }
+                case SDL_MOUSEWHEEL:
+                    if (evnt.wheel.y == 1 || evnt.wheel.y == -1) {
+                        _camera.processWheelMovement(evnt.wheel.y);
+                    }
                 default:
-                    std::cout << "N/A" << std::endl;
                     break;
                 }
-           }
-           if (evnt.type == SDL_MOUSEMOTION) {
-               SDL_SetRelativeMouseMode(SDL_TRUE);
-               std::cout << "Mouse Event" << std::endl;
-               float lastX = cst::SCREEN_WIDTH / 2.0f;
-               float lastY = cst::SCREEN_HEIGHT / 2.0f;
-               float offsetX = lastX - evnt.motion.x;
-               float offsetY = evnt.motion.y - lastY;
-               _camera.processMouseMovement(offsetX, offsetY);
-
-               SDL_WarpMouseInWindow(_window, cst::SCREEN_WIDTH / 2, cst::SCREEN_HEIGHT / 2);
-           }
-        }
-        /*
-        while (SDL_PollEvent(&evnt)) {
-            switch (evnt.type) {
-            case SDL_QUIT:
-                _windowState = WindowState::OFF;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                std::cout << evnt.motion.x << " " << evnt.motion.y << std::endl;
-                _pt1 = glm::vec3(evnt.motion.x/1224.0, evnt.motion.y/868.0, 0.0);
             }
         }
-         */
     }
 
     void MainWindow::drawWindow() {
@@ -269,15 +270,14 @@ namespace Afeb {
          */
 
         std::string uniformCamera = "camera";
-        // std::string uniformModel = "model";
+        std::string uniformModel = "model";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
             GL_FALSE, glm::value_ptr(_camera.matrix()));
         /*
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformModel.c_str()), 1,
             GL_FALSE, glm::value_ptr(glm::rotate(glm::mat4(),
-      glm::radians(_degreesRotated),glm::vec3(0, 0, 1))));
+      glm::radians(_degreesRotated),glm::vec3(0, 0, -5))));
          */
-
 
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
             glm::vec3(0.0f, 0.5f, 0.0f),

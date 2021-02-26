@@ -7,10 +7,11 @@
 
 #include <GL/glew.h>
 #include <SDL.h>
+#include <imgui.h>
+#include "Camera3D.h"
 #include "CoordSystem.h"
 #include "GlslProgram.h"
 #include "Triangle.h"
-#include "Camera3D.h"
 
 struct Coords {
     int x;
@@ -41,6 +42,7 @@ namespace Afeb {
 
         float _curTime = 1.0f;
         float _degreesRotated = 0.0f;
+        bool _leftMousePressed = false;
 
         void initSystems();
         void mainLoop();
