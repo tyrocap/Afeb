@@ -13,6 +13,8 @@
 #include "GlslProgram.h"
 #include "Triangle.h"
 
+#include <vector>
+
 struct Coords {
     int x;
     int y;
@@ -47,6 +49,7 @@ namespace Afeb {
         // End
 
         bool _leftMousePressed = false;
+        std::vector<Triangle> _triangles;
 
         void initSystems();
         void mainLoop();

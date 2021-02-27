@@ -9,23 +9,25 @@
 namespace Afeb {
 
     namespace cst {
-        const int TRIANGLE_DATA_LENGTH = 18; // 6 per point (3 position & 3 color)
-        const int INDICES_TO_DRAW = 3;
+        const int INDICES_TO_DRAW = 12;
+        const int TRIANGLE_DATA_LENGTH = INDICES_TO_DRAW * 6; // 6 per point (3 position & 3 color)
         const int NUMBER_OF_COMPONENTS_PER_VERTEX = 3;
         const int BYTE_OFFSET = 6;
         const int OFFSET_TO_NEXT_VERTEX_ATTRIB = 3;
         const int FIRST_ATTRIBUTE = 0; // position
         const int SECOND_ATTRIBUTE = 1; // color
-        const int TRIANGLE_POINTS = 3;
+        // TODO:
+        const int TRIANGLE_POINTS = 12;
     } // namespace cst
 
     class Triangle {
     public:
-        Triangle(const glm::vec3* positions, const glm::vec3* color);
+        Triangle();
         ~Triangle();
 
         void changeColor(const glm::vec3 &color);
         void draw() const;
+        void draw_bbox();
         void transform(const glm::mat4 &transMatrix);
 
     private:

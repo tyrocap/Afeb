@@ -8,7 +8,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
@@ -17,7 +16,8 @@
 #include "Camera3D.h"
 #include "Error.h"
 
-
+#include <algorithm>
+#include <iostream>
 
 namespace Afeb {
 
@@ -40,7 +40,9 @@ namespace Afeb {
                                _translate(glm::vec3()),
                                _rotate(0.0f),
                                _scale(glm::vec3()),
-                               _camera(){};
+                               _camera(),
+                               _triangles{} {
+   };
 
     MainWindow::~MainWindow() {
         _window = nullptr;
@@ -177,6 +179,11 @@ namespace Afeb {
                 _flags[cst::DRAW_FILLED_FLAG_INDEX] = drawFilled;
             }
 
+            if (ImGui::Button("Add triangle")) {
+                Triangle triangle;
+                _triangles.push_back(triangle);
+            }
+
             drawWindow();
         }
     }
@@ -263,45 +270,12 @@ namespace Afeb {
         glEnable(GL_DEPTH_TEST);
 
         std::string uniformCamera = "camera";
-        std::string uniformModel = "model";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
             GL_FALSE, glm::value_ptr(_camera.matrix()));
-
-        // triangle data
-        glm::vec3 positions[cst::TRIANGLE_POINTS] = {
-            glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(-0.5f, -0.5f, 0.5f),
-            glm::vec3(0.5f, -0.5f, 0.5f)};
-        glm::vec3 color(0.0f, 0.0f, 0.0f);
-
-        glm::vec3 positions1[cst::TRIANGLE_POINTS] = {
-            glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(0.5f, -0.5f, 0.5f),
-            glm::vec3(0.5f, -0.5f, -0.5f)};
-        glm::vec3 color1(0.0f, 1.0f, 0.5f);
-
-        glm::vec3 positions2[cst::TRIANGLE_POINTS] = {
-            glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(0.5f, -0.5f, -0.5f),
-            glm::vec3(-0.5f, -0.5f, -0.5f)};
-        glm::vec3 color2(1.0f, 0.0f, 0.0f);
-
-        glm::vec3 positions3[cst::TRIANGLE_POINTS] = {
-            glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(-0.5f, -0.5f, -0.5f),
-            glm::vec3(-0.5f, -0.5f, 0.5f)};
-        glm::vec3 color3(0.3f, 0.3f, 0.3f);
-
-        Triangle triangle(positions, &color);
-        Triangle triangle1(positions1, &color1);
-        Triangle triangle2(positions2, &color2);
-        Triangle triangle3(positions3, &color3);
 
         // transformation matrix
         glm::mat4 m(1.0f);
 
-        if (_flags[cst::COLOR_FLAG_INDEX])
-            triangle.changeColor(_color);
         if (_flags[cst::TRANSLATE_FLAG_INDEX])
             m = glm::translate(m, _translate);
         if (_flags[cst::ROTATE_FLAG_INDEX])
@@ -309,15 +283,14 @@ namespace Afeb {
         if (_flags[cst::SCALE_FLAG_INDEX])
             m = glm::scale(m, _scale);
 
-        triangle.transform(m);
-        triangle1.transform(m);
-        triangle2.transform(m);
-        triangle3.transform(m);
-
-        triangle.draw();
-        triangle1.draw();
-        triangle2.draw();
-        triangle3.draw();
+        for (auto _triangle : _triangles) {
+            if (_flags[cst::COLOR_FLAG_INDEX])
+                _triangle.changeColor(_color);
+            _triangle.transform(m);
+            _triangle.draw();
+            _triangle.draw_bbox();
+        }
+        std::cout << _triangles.size() << std::endl;
 
         _coordSystem.draw();
 
