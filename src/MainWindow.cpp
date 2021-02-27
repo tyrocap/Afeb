@@ -17,6 +17,8 @@
 #include "Camera3D.h"
 #include "Error.h"
 
+
+
 namespace Afeb {
 
     namespace cst {
@@ -227,12 +229,10 @@ namespace Afeb {
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    std::cout << "SDL_MOUSEMOTION" << std::endl;
                     if (_leftMousePressed) {
                         SDL_SetRelativeMouseMode(SDL_TRUE);
                         auto offsetX = (float)evnt.motion.xrel;
                         auto offsetY = (float)evnt.motion.yrel;
-                        std::cout << "_cameraPosition: " << glm::to_string(_camera.position()) << std::endl;
                         _camera.processMouseMovement(offsetX, offsetY);
                         SDL_WarpMouseInWindow(_window, cst::SCREEN_WIDTH / 2, cst::SCREEN_HEIGHT / 2);
                     }
@@ -262,23 +262,12 @@ namespace Afeb {
         }
         glEnable(GL_DEPTH_TEST);
 
-        /*
-        // Camera related stuff
-        const float radius = 30.0f;
-        float camX = sin(_curTime * radius);
-        float camZ = cos(_curTime * radius);
-         */
-
         std::string uniformCamera = "camera";
         std::string uniformModel = "model";
         glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformCamera.c_str()), 1,
             GL_FALSE, glm::value_ptr(_camera.matrix()));
-        /*
-        glUniformMatrix4fv(glGetUniformLocation(_shaderProgram.getID(), uniformModel.c_str()), 1,
-            GL_FALSE, glm::value_ptr(glm::rotate(glm::mat4(),
-      glm::radians(_degreesRotated),glm::vec3(0, 0, -5))));
-         */
 
+        // triangle data
         glm::vec3 positions[cst::TRIANGLE_POINTS] = {
             glm::vec3(0.0f, 0.5f, 0.0f),
             glm::vec3(-0.5f, -0.5f, 0.5f),
@@ -340,8 +329,6 @@ namespace Afeb {
 
         // Swap buffers and draw everything to the screen
         SDL_GL_SwapWindow(_window);
-
-        _curTime += 0.0005f;
     }
 
     void MainWindow::initShaders() {

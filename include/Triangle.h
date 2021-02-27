@@ -25,11 +25,12 @@ namespace Afeb {
         ~Triangle();
 
         void changeColor(const glm::vec3 &color);
-        void draw();
-        void copyToBuffer();
+        void draw() const;
         void transform(const glm::mat4 &transMatrix);
 
     private:
+        void copyToBuffer() const;
+
         float _vertexData[cst::TRIANGLE_DATA_LENGTH];
         unsigned int _vboID;
     };

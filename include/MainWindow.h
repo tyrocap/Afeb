@@ -34,14 +34,18 @@ namespace Afeb {
 
 
     private:
+        // TODO:
         bool _flags[5] = {0};
+
+        // TODO: since these dont have anything to do
+        // with MainWindow, they could be declared
+        // static in the source file.
         glm::vec3 _color = glm::vec3(0.0f);
         glm::vec3 _translate{};
         glm::vec3 _scale{};
         float _rotate{};
+        // End
 
-        float _curTime = 1.0f;
-        float _degreesRotated = 0.0f;
         bool _leftMousePressed = false;
 
         void initSystems();
@@ -59,8 +63,6 @@ namespace Afeb {
 
         GlslProgram _shaderProgram;
         Camera3D _camera;
-
-
     };
 }
 

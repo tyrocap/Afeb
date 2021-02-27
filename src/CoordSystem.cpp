@@ -12,9 +12,9 @@ namespace Afeb {
     }
 
 
-    CoordSystem::CoordSystem() {
-        _vboID = 0;
-    }
+    CoordSystem::CoordSystem() :
+        _xYCoordsData{},
+        _vboID(0) {}
 
     // TODO: apply rule of 3
     CoordSystem::~CoordSystem() {

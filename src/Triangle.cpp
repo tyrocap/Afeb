@@ -28,7 +28,7 @@ namespace Afeb {
         }
     }
 
-    void Triangle::draw() {
+    void Triangle::draw() const {
         glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 
         glEnableVertexAttribArray(cst::FIRST_ATTRIBUTE);
@@ -64,7 +64,7 @@ namespace Afeb {
         copyToBuffer();
     }
 
-    void Triangle::copyToBuffer() {
+    void Triangle::copyToBuffer() const {
         // Bind buffer
         glBindBuffer(GL_ARRAY_BUFFER, _vboID);
 
